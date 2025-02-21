@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace:填写映射当前的Mapper接口，所有的增删改查的参数和返回值类型，
+		就可以直接填写缩写，不区分大小写，直接通过方法名去找类型-->
+<mapper namespace="com.westonline.socialplatform.mapper.UserMapper">
+
+    <!--    id 对应的是mapper.CaseMapper里的方法名-->
+
+    <select id="selectOneUser" resultType="string">
+        select userName from user where userId =#{userId};
+    </select>
+    <select id="selectOne" resultType="com.westonline.socialplatform.pojo.User">
+        select * from user where userid =#{userId}
+    </select>
+    <select id="selectLikes" resultType="com.westonline.socialplatform.pojo.Article">
+        select * from article where articleId in (select articleId from likes where userId = #{id})
+    </select>
+    <select id="selectWritten" resultType="com.westonline.socialplatform.pojo.Article">
+        select * from article where articleId in (select articleId from writing where userId = #{id})
+
+    </select>
+  <select id="selectUserByUserName" resultType="com.westonline.socialplatform.pojo.User">
+        select * from user where userName=#{userName};
+    </select>
+    <select id="getPassword" resultType="java.lang.String">
+        select password from user where userName = #{userName};
+    </select>
+    <select id="getUserId" resultType="java.lang.String">
+        select userId from user where  userName = #{userName};
+    </select>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into user (userName,cv,image,password) values (#{userName},'这个人很神秘，什么也没留下',#{image},#{password});
+    </insert>
+
+    <update id="updateUser">
+        update user 
+        <set>
+            <if test="userName!=null and userName!='' ">
+                userName = #{userName},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="image!=null">
+                image=#{image},
+            </if>
+        </set>
+        where userId = #{userId};
+    </update>
+
+</mapper>
