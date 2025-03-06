@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace:填写映射当前的Mapper接口，所有的增删改查的参数和返回值类型，
+		就可以直接填写缩写，不区分大小写，直接通过方法名去找类型-->
+<mapper namespace="com.westonline.socialplatform.mapper.ReviewMapper">
+    <!--    id 对应的是mapper.CaseMapper里的方法名-->
+
+    <select id="selectByArticleId" resultType="com.westonline.socialplatform.pojo.Review">
+       select * from review where reviewId in (select reviewId from contain where articleId =#{id})
+    </select>
+    <select id="selectByReviewId" resultType="com.westonline.socialplatform.pojo.Review">
+        select * from review where reviewId in(select subReview from subComment where domReview=#{id});
+    </select>
+    <select id="selectUserByReviewId" resultType="com.westonline.socialplatform.pojo.User">
+        select * from user where userId in (select userId from comment where reviewId=#{reviewId});
+    </select>
+
+
+    <insert id="insertReview" useGeneratedKeys="true" keyProperty="reviewId">
+        insert into review (reviewContent) values (#{reviewContent})
+    </insert>
+    <insert id="insertReviewUser">
+        insert into comment values (#{userId},#{reviewId});
+    </insert>
+    <insert id="insertContain">
+        insert into contain values (#{articleId},#{reviewId});
+    </insert>
+    <insert id="insertSubComment">
+        insert into subComment values (#{domReview},#{subReview})
+    </insert>
+
+</mapper>
